@@ -13,3 +13,4 @@ class ProductAdmin(admin.ModelAdmin):
 admin.site.register(Category)
 admin.site.register(Products, ProductAdmin)
 admin.site.register(Review)
+admin.site.register(Tag)
