@@ -1,16 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Детали: {{ title }}</h1>
-<span>ID: {{ product.id }}</span><br/>
-<a href="/products/{{ product.id }}">Title: {{ product.title}}</a><br/>
-<span>Цена: {{ product.price }}</span><br/>
-<span>Категория: {{ product.category.name }}</span><br/>
-<span>Теги: {{ product.tag.name }}</span>
-<hr/>
-</body>
-</html>
+{% extends 'layout.html' %}
+{% block content %}
+    <h1>Детали: {{ title }}</h1>
+    <span>ID: {{ product.id }}</span><br/>
+    <a href="/products/{{ product.id }}">Title: {{ product.title }}</a><br/>
+    <span>Цена: {{ product.price }}</span><br/>
+    <span>Категория: {{ product.category.name }}</span><br/>
+    <span>Теги:
+        {% for tag in product.tags.all %} {{ tag.name }}  {% endfor %}
+</span>
+    <hr/>
+{% endblock %}

@@ -28,7 +28,7 @@ class Products(models.Model):
     description = models.TextField(null=True, blank=True, verbose_name="Описание")
     price = models.FloatField(verbose_name="Цена")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Категория")
-    tag = models.ManyToManyField(Tag, blank=True, verbose_name="Теги")
+    tags = models.ManyToManyField(Tag, blank=True, verbose_name="Теги")
 
     class Meta:
         verbose_name = "Продукт"
