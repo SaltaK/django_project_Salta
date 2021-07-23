@@ -22,5 +22,6 @@ from products import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.main_page_view),
-    path('products/<int:product_id>/', views.product_item_view)
+    path('products/<int:product_id>/', views.product_item_view),
+    path('Category/<int:category_id>/', views.category_item_view)
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
