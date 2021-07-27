@@ -1,7 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
 from .models import Products
 from products.models import Category
+from products.forms import ProductsForm
+from django.contrib import auth
+from .forms import LoginForm
+from django.contrib.auth.decorators import login_required
 
 
 def main_page_view(request):
@@ -16,7 +20,7 @@ def main_page_view(request):
     data = {
         'title': 'Главная страница',
         'product_list': products,
-        'category_list' : categories
+        'category_list': categories
     }
     return render(request, 'index.html', context=data)
 
@@ -42,3 +46,36 @@ def category_item_view(request, category_id):
 
     }
     return render(request, 'category.html', context=data)
+
+
+@login_required(login_url='/login/')
+def add_product(request):
+    if request.method == "GET":
+        data = {
+            'form': ProductsForm()
+        }
+        return render(request, 'add.html', context=data)
+    elif request.method == "POST":
+        form = ProductsForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+
+def logout(request):
+    auth.logout(request)
+    return redirect('/login/')
+
+
+def login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = auth.authenticate(username=username, password=password)
+        if user is not None:
+            auth.login(request, user)
+            return redirect('/')
+    data = {
+        'form': LoginForm
+    }
+    return render(request, 'login.html', context=data)
