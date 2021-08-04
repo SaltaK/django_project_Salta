@@ -2,16 +2,27 @@ from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
 from .models import Products
 from products.models import Category
-from products.forms import ProductsForm
+from products.forms import ProductsForm, RegisterForm
 from django.contrib import auth
 from .forms import LoginForm
 from django.contrib.auth.decorators import login_required
 
 
+PAGE_SIZE = 2
+
+
 def main_page_view(request):
+    page = int(request.GET.get('page', '1'))
+    print('Страница', page)
+    print(f'Объекты: [{(page - 1) * PAGE_SIZE}:{page * PAGE_SIZE}]')
     products = Products.objects.all()
     categories = Category.objects.all()
-    print(products)
+    total = products.count()
+    page_count = total // PAGE_SIZE
+    if total % PAGE_SIZE > 0:
+        page_count += 1
+    next_page = page + 1
+    prev_page = page - 1
     for i in products:
         print('id:', i.id)
         print('title:', i.title)
@@ -19,7 +30,12 @@ def main_page_view(request):
         print()
     data = {
         'title': 'Главная страница',
-        'product_list': products,
+        'page': page,
+        'next_page': next_page,
+        'prev_page': prev_page,
+        'last_page': page_count,
+        'page_count': range(1, page_count + 1),
+        'product_list': products[(page - 1) * PAGE_SIZE:page * PAGE_SIZE],
         'category_list': categories
     }
     return render(request, 'index.html', context=data)
@@ -79,3 +95,20 @@ def login(request):
         'form': LoginForm
     }
     return render(request, 'login.html', context=data)
+
+
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/login/')
+        else:
+            data = {
+                'form': form
+            }
+            return render(request, 'register.html', context=data)
+    data = {
+        'form': RegisterForm()
+    }
+    return render(request, 'register.html', context=data)
