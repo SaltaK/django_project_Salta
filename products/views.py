@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
 from .models import Products
@@ -112,3 +113,15 @@ def register(request):
         'form': RegisterForm()
     }
     return render(request, 'register.html', context=data)
+
+
+def search(request):
+    query = request.GET.get('query', '')
+    print(query)
+    products = Products.objects.filter(title__contains=query)
+    print(products.values())
+    return JsonResponse(data={'list': list(products.values())}, safe=False)
+
+
+def javascript(request):
+    return render(request, 'javascript.html')
