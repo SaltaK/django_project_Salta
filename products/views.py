@@ -1,7 +1,9 @@
+import datetime
+
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
-from .models import Products
+from .models import Products, ConfirmCode
 from products.models import Category
 from products.forms import ProductsForm, RegisterForm
 from django.contrib import auth
@@ -125,3 +127,14 @@ def search(request):
 
 def javascript(request):
     return render(request, 'javascript.html')
+
+
+def activate(request, code):
+    print(code)
+    try:
+        user = ConfirmCode.objects.get(code=code, valid_until__gte=datetime.datetime.now()).user
+        user.is_active = True
+        user.save()
+    except:
+        pass
+    return redirect('/login/')

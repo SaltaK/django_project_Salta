@@ -1,10 +1,13 @@
+import datetime
+import secrets
+
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 
-from products.models import Products
+from products.models import Products, ConfirmCode
 
 
 class ProductsForm(forms.ModelForm):
@@ -79,7 +82,7 @@ class RegisterForm(forms.Form):
         if password != password1:
             raise ValidationError('Пароли не совпадают!')
 
-    def save(self, commit=True):
+    def save(self):
         user = User.objects.create_user(
             username=self.cleaned_data['username'],
             email=self.cleaned_data['username'],
@@ -87,9 +90,13 @@ class RegisterForm(forms.Form):
             is_active=True
         )
         user.save()
+        code = secrets.token_urlsafe(6)
+        ConfirmCode.objects.create(code=code,
+                                   user=user,
+                                   valid_until=datetime.datetime.now()+datetime.timedelta(minutes=20))
         send_mail(
-            message='Test django text',
-            subject='Registration test',
+            message=f'http://127.0.0.1:8000/activate/{code}/',
+            subject='Activation code',
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[self.cleaned_data['username']]
         )

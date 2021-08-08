@@ -22,6 +22,7 @@ from products import views
 urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('', views.main_page_view),
+                  path('activate/<str:code>/', views.activate),
                   path('add_products/', views.add_product),
                   path('logout/', views.logout),
                   path('login/', views.login),

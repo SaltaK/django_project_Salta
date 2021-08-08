@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -48,3 +49,12 @@ class Review(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class ConfirmCode(models.Model):
+    code = models.CharField(max_length=12)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    valid_until = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return self.code
